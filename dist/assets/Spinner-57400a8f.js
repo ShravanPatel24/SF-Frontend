@@ -1,0 +1,1 @@
+import{j as d}from"./index-50ad91ff.js";const x=({tag:t="div",type:r="bordered",className:n,color:e,size:s,children:o})=>{const a=t||"div";return d.jsx(a,{role:"status",className:`${r==="bordered"?"spinner-border":r==="grow"?"spinner-grow":""} ${e?`text-${e}`:"text-secondary"} ${s?"avatar-"+s:""} ${n}`,children:o})};export{x as S};

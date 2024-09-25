@@ -1,0 +1,1 @@
+import{H as e}from"./index-50ad91ff.js";function a(){return{addCareers:r=>e.post("/careers",r),getCareersList:r=>e.get(`/careers?page=${r.page}&sortBy=${r.sortBy}&limit=${r.limit}&searchBy=${r.searchBy}&status=${r.status}`),getCareersDetails:r=>e.get("/careers/"+r),updateCareers:(r,t)=>e.patch("/careers/"+t,r)}}const i=a();export{i as C};

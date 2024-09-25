@@ -1,0 +1,1 @@
+import{H as a}from"./index-50ad91ff.js";function e(){return{addFAQ:t=>a.post("/faq",t),getFAQList:t=>a.get(`/faq?page=${t.page}&sortBy=${t.sortBy}&limit=${t.limit}&searchBy=${t.searchBy}&status=${t.status}`),getFAQDetails:t=>a.get("/faq/"+t),updateFAQ:(t,r)=>a.patch("/faq/"+r,t)}}const s=e();export{s as F};
