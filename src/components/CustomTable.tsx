@@ -92,8 +92,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
 		<Row>
 			<Card>
 				<Card.Header>
-					<Row>
-						<Col lg={4}>
+					<Row className="align-items-center g-2">
+						{' '}
+						{/* align-items-center will vertically align items */}
+						<Col lg={3}>
+							{' '}
+							{/* Adjust search bar width */}
 							<div className="input-group">
 								<input
 									type="text"
@@ -121,7 +125,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
 							</div>
 						</Col>
 						{filterBy === 'status' && (
-							<Col lg={4}>
+							<Col lg={2}>
+								{' '}
+								{/* Adjust Filter By Status width */}
 								<div className="input-group">
 									<Select
 										className="select2 z-3"
@@ -138,22 +144,27 @@ const CustomTable: React.FC<CustomTableProps> = ({
 							</Col>
 						)}
 						{(navigationUrl === '/users' ||
-							navigationUrl === '/users/partner') && (
-								<Col lg={4}>
-									<div className="input-group">
-										<Select
-											className="select2 z-3"
-											placeholder="Filter By Date Range"
-											options={dateRangeFilterOptions}
-											onChange={(selectedOption: any) =>
-												onDateRangeChange(selectedOption?.value)
-											}
-										/>
-									</div>
-								</Col>
-							)}
+							navigationUrl === '/users/partner' ||
+							navigationUrl === '/business-type') && (
+							<Col lg={3}>
+								{' '}
+								{/* Adjust Filter By Date Range width */}
+								<div className="input-group">
+									<Select
+										className="select2 z-3"
+										placeholder="Filter By Date Range"
+										options={dateRangeFilterOptions}
+										onChange={(selectedOption: any) =>
+											onDateRangeChange(selectedOption?.value)
+										}
+									/>
+								</div>
+							</Col>
+						)}
 						{addButtonName !== '' && (
-							<Col lg={4} className="text-end">
+							<Col lg={3} className="text-end">
+								{' '}
+								{/* Align Add Button to the right */}
 								<Link to={navigationUrl + '/add'} className="btn btn-primary">
 									{addButtonName}
 								</Link>
@@ -203,12 +214,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
 																record?.images
 																	? `${baseUrl}media/preview?filename=${record?.images[0]}`
 																	: record?.image
-																		? `${baseUrl}media/preview?filename=${record?.image}`
-																		: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Aneka'
+																	? `${baseUrl}media/preview?filename=${record?.image}`
+																	: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Aneka'
 															}
 															alt="table-user"
 															className="me-2 rounded-circle"
-														// onError={(e) => { e.target?.src = '/src/assets/images/placeholder.jpg' }}
+															// onError={(e) => { e.target?.src = '/src/assets/images/placeholder.jpg' }}
 														/>
 														&nbsp;{record?.name}
 													</Zoom>
@@ -217,12 +228,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
 														{record?.name
 															? record?.name
 															: record?.pageTitle
-																? record?.pageTitle
-																: record?.orderId
-																	? record?.orderId
-																	: record?.title
-																		? record?.title
-																		: record?.question}
+															? record?.pageTitle
+															: record?.orderId
+															? record?.orderId
+															: record?.title
+															? record?.title
+															: record?.question}
 													</>
 												)}
 											</td>
@@ -289,8 +300,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
 															{navigationUrl !== '/orders' && (
 																<Dropdown.Item>
 																	<Link
-																		to={`${navigationUrl}/edit/${isSlug ? record?.slug : record?.id
-																			}`}
+																		to={`${navigationUrl}/edit/${
+																			isSlug ? record?.slug : record?.id
+																		}`}
 																		className="text-reset fs-16 px-1">
 																		<i className="ri-pencil-line" /> Edit
 																	</Link>
@@ -363,4 +375,4 @@ const CustomTable: React.FC<CustomTableProps> = ({
 	)
 }
 
-export default CustomTable;
+export default CustomTable

@@ -9,10 +9,10 @@ export default function useCategory() {
 	const [categoryList, setCategoryList] = useState([]);
 	const [totalPages, setTotalPages] = useState(1);
 
-	const getList = async ({ page, sortBy, limit, searchBy, status }: List) => {
+	const getList = async ({ page, sortBy, limit, searchBy, status, filterDateRange }: List) => {
 		setLoading(true);
 		try {
-			const res: any = await categoryApi.getCategoryList({ page, sortBy, limit, searchBy, status });
+			const res: any = await categoryApi.getCategoryList({ page, sortBy, limit, searchBy, status, filterDateRange });
 			if (res?.code == 200) {
 				// Handle potential errors in the response format
 				setTotalPages(res?.data?.totalPages);

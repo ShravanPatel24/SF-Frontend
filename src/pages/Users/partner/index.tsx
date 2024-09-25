@@ -6,15 +6,10 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 const CategoryTables = () => {
-	const { loading, usersList, getList, totalPages, updateStatus } =
-		usePartners()
+	const { loading, usersList, getList, totalPages, updateStatus } = usePartners()
 	const [searchTerm, setSearchTerm] = useState('')
 	const [pageNumber, setPageNumber] = useState(1)
 	const [status, setStatus] = useState('')
-	const [dateRange, setDateRange] = useState('') // For predefined ranges
-	const [customStartDate, setCustomStartDate] = useState<Date | null>(null) // Custom Start Date
-	const [customEndDate, setCustomEndDate] = useState<Date | null>(null) // Custom End Date
-	const [applyCustomDateRange, setApplyCustomDateRange] = useState(false)
 	const columns = [
 		'S.No.',
 		'Name',
@@ -29,16 +24,24 @@ const CategoryTables = () => {
 		{ value: '1', label: 'Active' },
 		{ value: '0', label: 'Inactive' },
 	]
+	const [dateRange, setDateRange] = useState('')
+	const [customStartDate, setCustomStartDate] = useState<Date | null>(null)
+	const [customEndDate, setCustomEndDate] = useState<Date | null>(null)
+	const [isCustomRange, setIsCustomRange] = useState(false)
 
-	useEffect(() => {
-		// Check if we should apply the custom date range
-		if (applyCustomDateRange && customStartDate && customEndDate) {
-			// Format the custom date range
-			const filterDateRange = `${customStartDate.toISOString().split('T')[0]}-${
-				customEndDate.toISOString().split('T')[0]
-			}`
+	const formatDate = (date: Date) => {
+		const year = date.getFullYear()
+		const month = String(date.getMonth() + 1).padStart(2, '0')
+		const day = String(date.getDate()).padStart(2, '0')
+		return `${year}-${month}-${day}`
+	}
 
-			// Make the API call with the custom date range
+	const handleApplyCustomRange = () => {
+		if (customStartDate && customEndDate) {
+			const formattedStartDate = formatDate(customStartDate)
+			const formattedEndDate = formatDate(customEndDate)
+			const customDateRange = `${formattedStartDate}-${formattedEndDate}`
+			setIsCustomRange(true)
 			getList({
 				page: pageNumber,
 				sortBy: 'asc',
@@ -46,13 +49,39 @@ const CategoryTables = () => {
 				searchBy: encodeURIComponent(searchTerm),
 				status,
 				type: 'partner',
-				filterDateRange,
+				filterDateRange: customDateRange,
 			})
+		}
+	}
 
-			// Reset the applyCustomDateRange flag to prevent duplicate API calls
-			setApplyCustomDateRange(false)
-		} else if (dateRange !== 'custom') {
-			// If it's not a custom date range, make the API call based on the pre-defined date ranges
+	const handleClearCustomRange = () => {
+		setCustomStartDate(null)
+		setCustomEndDate(null)
+		setDateRange('')
+		setStatus('') 
+		setSearchTerm('') 
+		setIsCustomRange(false) 
+		getList({ page: 1, sortBy: 'asc', limit: 10, searchBy: '',  status: '',  type: 'partner', filterDateRange: '' })
+	}
+
+	const onDateRangeChange = (selectedRange: string) => {
+		setDateRange(selectedRange)
+		setIsCustomRange(false)
+		if (selectedRange !== 'custom') {
+			getList({
+				page: pageNumber,
+				sortBy: 'asc',
+				limit: 10,
+				searchBy: encodeURIComponent(searchTerm),
+				status,
+				type: 'partner',
+				filterDateRange: selectedRange,
+			})
+		}
+	}
+
+	useEffect(() => {
+		if (!isCustomRange && dateRange !== 'custom') {
 			getList({
 				page: pageNumber,
 				sortBy: 'asc',
@@ -63,79 +92,7 @@ const CategoryTables = () => {
 				filterDateRange: dateRange,
 			})
 		}
-	}, [
-		searchTerm,
-		pageNumber,
-		status,
-		dateRange,
-		applyCustomDateRange,
-		customStartDate,
-		customEndDate,
-	])
-
-	// Function to handle input change
-	const handleInputChange = (event: any) => {
-		setSearchTerm(event.target.value)
-	}
-
-	const onPageChange = (event: any) => {
-		setPageNumber(event)
-	}
-
-	const changeStatus = (event: any) => {
-		setStatus(event)
-	}
-
-	const onDateRangeChange = (selectedRange: string) => {
-		setDateRange(selectedRange)
-
-		// Clear custom date if selecting a predefined range
-		if (selectedRange !== 'custom') {
-			setCustomStartDate(null)
-			setCustomEndDate(null)
-			setApplyCustomDateRange(false)
-		}
-	}
-
-	const handleApplyCustomRange = () => {
-		if (customStartDate && customEndDate) {
-			// Format the dates to "YYYY-MM-DD" using local time
-			const formattedStartDate = customStartDate.toLocaleDateString('en-CA') // "en-CA" ensures "YYYY-MM-DD" format
-			const formattedEndDate = customEndDate.toLocaleDateString('en-CA') // Use the same formatting for end date
-
-			// Set the custom date range in the correct format
-			const customDateRange = `${formattedStartDate}-${formattedEndDate}`
-
-			// Set the state to apply the custom date range
-			setApplyCustomDateRange(true)
-
-			// Make the API call with the formatted date range
-			getList({
-				page: pageNumber,
-				sortBy: 'asc',
-				limit: 10,
-				searchBy: encodeURIComponent(searchTerm),
-				status,
-				type: 'partner',
-				filterDateRange: customDateRange, // Send the correctly formatted date range
-			})
-		}
-	}
-
-	const handleClearCustomRange = () => {
-		setCustomStartDate(null)
-		setCustomEndDate(null)
-		setApplyCustomDateRange(false) // Reset the date range application
-	}
-
-	const dateRangeFilterOptions = [
-		{ value: '', label: 'All' },
-		{ value: 'past_3_months', label: 'Past 3 Months' },
-		{ value: 'past_6_months', label: 'Past 6 Months' },
-		{ value: '2023', label: '2023' },
-		{ value: '2022', label: '2022' },
-		{ value: 'custom', label: 'Custom Date Range' },
-	]
+	}, [searchTerm, pageNumber, status, dateRange, isCustomRange])
 
 	return (
 		<>
@@ -143,7 +100,6 @@ const CategoryTables = () => {
 			<CustomTable
 				loading={loading}
 				data={usersList}
-				// addButtonName="Add Partner"
 				addButtonName=""
 				navigationUrl="/users/partner"
 				isImage="show"
@@ -154,13 +110,20 @@ const CategoryTables = () => {
 				filterValue={statusFilterValues}
 				status={status}
 				isSlug={false}
-				onPageChange={onPageChange}
+				onPageChange={setPageNumber}
 				updateStatus={updateStatus}
-				changeStatus={changeStatus}
+				changeStatus={setStatus}
 				searchTerm={searchTerm}
-				handleInputChange={handleInputChange}
+				handleInputChange={(e) => setSearchTerm(e.target.value)}
 				isAction={true}
-				dateRangeFilterOptions={dateRangeFilterOptions}
+				dateRangeFilterOptions={[
+					{ value: '', label: 'All' },
+					{ value: 'past_3_months', label: 'Past 3 Months' },
+					{ value: 'past_6_months', label: 'Past 6 Months' },
+					{ value: '2023', label: '2023' },
+					{ value: '2022', label: '2022' },
+					{ value: 'custom', label: 'Custom Date Range' },
+				]}
 				onDateRangeChange={onDateRangeChange}
 				customStartDate={customStartDate}
 				customEndDate={customEndDate}
@@ -196,7 +159,7 @@ const CategoryTables = () => {
 							variant="secondary"
 							onClick={handleClearCustomRange}
 							className="ms-2">
-							Clear Date Range
+							Close Date Range
 						</Button>
 					</Col>
 				</Row>
